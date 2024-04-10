@@ -1,0 +1,331 @@
+[概要]
+全体を通して以下のスペルミスがあった。
+- compresssion -> compression
+- disabed  ->  disabled
+- distrubtion  ->  distribution
+- fails to due to  ->  fails due to
+- guarentee  ->  spelled as guarantee
+- repalced  ->  replaced
+- resonable  ->  spelled as reasonable
+- unecessary  ->  unnecessary
+- when it will is  ->  "when it is"
+- there is a typo. The correct spelling  ->  depend not "depened"
+- unfortunatly -> Unfortunately
+- choise -> choice
+
+それぞれのスペルミスがどこであったかを以下に記載しておく。
+
+[詳細]
+=== (1) ===
+CommitID: f281cd0d692ac0c70fc7669b80dddb863ea947e1
+commitDate: Mon, 17 Jul 2023 15:34:55 +0000 (23:34 +0800)
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: compresssion -> compression
+--- full commit message ---
+xz: Add a message if --block-list is used outside of xz compresssion.
+
+--block-list is only supported with compression in xz format. This avoids
+silently ignoring when --block-list is unused.
+
+=== (2) ===
+
+CommitID: 1321852a3be7196bd7fcfd146221a5669e46407c
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: Thu, 16 Mar 2023 17:42:28 +0000 (01:42 +0800)
+distrubtion  ->  distribution
+--- full commit message ---
+Build: Create doxygen/update-doxygen script.
+
+This is a helper script to generate the Doxygen documentation. It can be
+run in 'liblzma' or 'internal' mode by setting the first argument. It
+will default to 'liblzma' mode and only generate documentation for the
+liblzma API header files.
+
+The helper script will be run during the custom mydist hook when we
+create releases. This hook already alters the source directory, so its
+fine to do it here too. This way, we can include the Doxygen generated
+files in the distrubtion and when installing.
+
+In 'liblzma' mode, the JavaScript is stripped from the .html files and
+the .js files are removed. This avoids license hassle from jQuery and
+other libraries that Doxygen 1.9.6 puts into jquery.js in minified form.
+
+=== (3) ===
+
+CommitID: f3a055f762ba5b71b746fc2d44a6ababde2c61b5
+commitDate: Sat, 22 Jul 2023 10:31:02 +0000 (18:31 +0800)
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: fails to due to  ->  fails due to
+--- full commit message ---
+CI: Add Windows runner for Autotools builds with MSYS2.
+
+Only a subset of the tests run by the Linux and MacOS Autotools builds
+are run. The most interesting tests are the ones that disable threads,
+encoders, and decoders.
+
+The Windows runner will only be run manually since these tests will
+likely take much longer than the Linux and MacOS runners. This runner
+should be used before merging any large features and before releases.
+
+Currently the clang64 environment fails to due to a warning and
+-Werror is enabled for the CI tests. This is still an early version
+since the CMake build can be done for MSVC and optionally each of the
+MSYS2 environments. GitHub does not allow manually running the CI tests
+unless the workflow is checked on the default branch so checking in a
+minimum version is a good idea.
+
+Thanks to Arthur S for the original proposing the original patch.
+
+Closes: https://github.com/tukaani-project/xz/pull/34
+
+=== (3) ===
+3回同じスペルミスを繰り返しているためまとめています。
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: guarentee -> guarantee
+CommitID: ae5c07b22a6b3766b84f409f1b6b5c100469068a
+CommitID: b34b6a9912d6165e34ba0db151b7f9941d2e06d5
+CommitID: f1ab1f6b339d16a53ac53efeb97779ecd2bae70f
+commitDate: Wed, 20 Dec 2023 13:38:39 +0000 (21:38 +0800)
+commitDate: Mon, 28 Aug 2023 15:04:56 +0000 (23:04 +0800)
+commitDate: Wed, 1 Mar 2023 13:42:31 +0000 (21:42 +0800)
+
+--- full commit message(merge all(3) commit messages) ---
+liblzma: Add overflow check for Unpadded size in lzma_index_append().
+
+This was not a security bug since there was no path to overflow
+UINT64_MAX in lzma_index_append() or when it calls index_file_size().
+The bug was discovered by a failing assert() in vli_ceil4() when called
+from index_file_size() when unpadded_sum (the sum of the compressed size
+of current Stream and the unpadded_size parameter) exceeds LZMA_VLI_MAX.
+
+Previously, the unpadded_size parameter was checked to be not greater
+than UNPADDED_SIZE_MAX, but no check was done once compressed_base was
+added.
+
+This could not have caused an integer overflow in index_file_size() when
+called by lzma_index_append(). The calculation for file_size breaks down
+into the sum of:
+
+- Compressed base from all previous Streams
+- 2 * LZMA_STREAM_HEADER_SIZE (size of the current Streams header and
+  footer)
+- stream_padding (can be set by lzma_index_stream_padding())
+- Compressed base from the current Stream
+- Unpadded size (parameter to lzma_index_append())
+
+The sum of everything except for Unpadded size must be less than
+LZMA_VLI_MAX. This is guarenteed by overflow checks in the functions
+that can set these values including lzma_index_stream_padding(),
+lzma_index_append(), and lzma_index_cat(). The maximum value for
+Unpadded size is enforced by lzma_index_append() to be less than or
+equal UNPADDED_SIZE_MAX. Thus, the sum cannot exceed UINT64_MAX since
+LZMA_VLI_MAX is half of UINT64_MAX.
+
+Thanks to Joona Kannisto for reporting this.
+
+liblzma: Initialize lzma_lz_encoder pointers with NULL.
+
+This fixes the recent change to lzma_lz_encoder that used memzero
+instead of the NULL constant. On some compilers the NULL constant
+(always 0) may not equal the NULL pointer (this only needs to guarentee
+to not point to valid memory address).
+
+Later code compares the pointers to the NULL pointer so we must
+initialize them with the NULL pointer instead of 0 to guarentee
+code correctness.
+
+liblzma: Clarify lzma_lzma_preset() documentation in lzma12.h.
+
+lzma_lzma_preset() does not guarentee that the lzma_options_lzma are
+usable in an encoder even if it returns false (success). If liblzma
+is built with default configurations, then the options will always be
+usable. However if the match finders hc3, hc4, or bt4 are disabled, then
+the options may not be usable depending on the preset level requested.
+
+The documentation was updated to reflect this complexity, since this
+behavior was unclear before.
+
+
+=== (4) ===
+
+CommitID: 04bd86a4b010d43c6a016a3857ecb38dc1d5b024
+mis-spell: repalced  ->  replaced
+commitDate: Fri, 22 Sep 2023 16:27:23 +0000 (00:27 +0800)
+committer: Jia Tan <jiat0218@gmail.com>
+
+--- full commit message ---
+lib: Update getopt.c from Gnulib with modifications.
+
+The code maintains the prior modifications of conditionally including
+config.h and disabling NLS support.
+
+_GL_UNUSED is repalced with the simple cast to void trick. _GL_UNUSED
+is only used for these two parameters so its simpler than having to
+define it.
+
+=== (5) ===
+
+CommitID: 6327a045f34d48fc5afc58ba0d32a82c94403049
+mis-spell: resonable  ->  reasonable
+commitDate: Thu, 19 Jan 2023 16:51:12 +0000 (00:51 +0800)
+committer: Jia Tan <jiat0218@gmail.com>
+
+--- full commit message ---
+Doxygen: Update Doxyfile.in from 1.4.7 to 1.8.17.
+
+A few Doxygen tags were obsolete from 1.4.7. Version 1.8.17 released
+in 2019, so this should be compatible with resonable modern distros.
+The purpose of Doxygen these days is for docs on the website, so it
+doesn't necessarily have to work for everyone. Just when the maintainers
+want to update the docs.
+
+=== (6) ===
+
+CommitID: ebddf20214143a8e002ab897e95e880bb4c5ac44
+commitDate: Thu, 21 Dec 2023 12:53:23 +0000 (20:53 +0800)
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: unecessary  ->  unnecessary
+
+--- full commit message ---
+CMake: Move sandbox detection outside of xz section.
+
+The sandbox is now enabled for xzdec as well, so it no longer belongs
+in just the xz section. xz and xzdec are always built, except for older
+MSVC versions, so there isn't a need to conditionally show the sandbox
+configuration. CMake will do a little unecessary work on older MSVC
+versions that can't build xz or xzdec, but this is a very small
+downside.
+
+=== (6) ===
+
+CommitID: f41df2ac2fed347d3f107f3533e76e000d29c6cb
+commitDate: Wed, 19 Apr 2023 14:22:16 +0000 (22:22 +0800)
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: when it will is  ->  "when it is"
+
+--- full commit message ---
+Windows: Include <intrin.h> when needed.
+
+Legacy Windows did not need to #include <intrin.h> to use the MSVC
+intrinsics. Newer versions likely just issue a warning, but the MSVC
+documentation says to include the header file for the intrinsics we use.
+
+GCC and Clang can \"pretend\" to be MSVC on Windows, so extra checks are
+needed in tuklib_integer.h to only include <intrin.h> when it will is
+actually needed.
+
+======
+このスペルミスは9回繰り返しているため、まとめています。
+commitDate: Fri, 30 Dec 2022 15:34:31 +0000 (23:34 +0800)
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: depend -> depened
+以下はcommit datetime とID
+Sat, 7 Jan 2023 13:15:16 +0000 (21:15 +0800)
+Thu, 19 Jan 2023 12:35:09 +0000 (20:35 +0800)
+Wed, 1 Mar 2023 13:42:31 +0000 (21:42 +0800)
+Thu, 16 Mar 2023 17:42:28 +0000 (01:42 +0800)
+Wed, 29 Mar 2023 15:46:43 +0000 (23:46 +0800)
+Tue, 6 Jun 2023 16:23:02 +0000 (00:23 +0800)
+Fri, 28 Jul 2023 13:56:48 +0000 (21:56 +0800)
+Mon, 25 Sep 2023 16:47:26 +0000 (00:47 +0800)
+CommitID: 2fcba17fc4d7eda8fc60567169cf2a0e6fcfb2f8
+CommitID: 4f50763b981f9056c5f1763dfb26cfa4a26a181d
+CommitID: 7190f4cc7c9ade5b9b3675d0cbfa3b6d6ec9cb4f
+CommitID: 747c7f2b34bd498f6702c6875500a26b06201772
+CommitID: 8be5cc3b1359d88b4b30a39067466c0ae0bfbc4d
+CommitID: b43ff180fb2e372adce876bfa155fc9bcf0c3db4
+CommitID: bbb42412da6a02705ba3e668e90840c2683e4e67
+CommitID: dbb3a536ed9873ffa0870321f6873e564c6a9da8
+CommitID: f1ab1f6b339d16a53ac53efeb97779ecd2bae70f
+
+--- full commit message ---
+xz: Includes <time.h> and <sys/time.h> conditionally in mytime.c.
+
+Previously, mytime.c depended on mythread.h for <time.h> to be included.
+
+
+CI: Add doxygen as a dependency.
+
+Autogen now requires --no-doxygen or having doxygen installed to run
+without errors.
+
+
+CI: Fix windows-ci dependency installation.
+
+All of the MSYS2 environments need make, and it does not come with the
+toolchain package. The toolchain package will install the needed
+compiler toolchains since without this package CMake cannot properly
+generate the Makefiles.
+
+
+CI/CD: Reduce job runners to 4 instead of using matrix strategy.
+
+The old version used too many runners that resulted in unnecessary
+dependency downloads. Now, the runners are reused for the different
+configurations for each OS and build system.
+
+
+CI: Removes CMakeCache.txt between builds.
+
+If the cache file is not removed, CMake will not reset configurations
+back to their default values. In order to make the tests independent, it
+is simplest to purge the cache. Unfortunatly, this will slow down the
+tests a little and repeat some checks.
+
+
+tuklib_physmem: Silence warning from -Wcast-function-type on MinGW-w64.
+
+tuklib_physmem depends on GetProcAddress() for both MSVC and MinGW-w64
+to retrieve a function address. The proper way to do this is to cast the
+return value to the type of function pointer retrieved. Unfortunately,
+this causes a cast-function-type warning, so the best solution is to
+simply ignore the warning.
+
+
+Build: Remove Gnulib dependency from tests.
+
+The tests do not use any Gnulib replacements so they do not need to link
+libgnu.a or have /lib in the include path.
+
+
+CI: Add apt update command before installing dependencies.
+
+Without the extra command, all of the CI tests were automatically
+failing because the Ubuntu servers could not be reached properly.
+
+
+liblzma: Clarify lzma_lzma_preset() documentation in lzma12.h.
+
+lzma_lzma_preset() does not guarentee that the lzma_options_lzma are
+usable in an encoder even if it returns false (success). If liblzma
+is built with default configurations, then the options will always be
+usable. However if the match finders hc3, hc4, or bt4 are disabled, then
+the options may not be usable depending on the preset level requested.
+
+The documentation was updated to reflect this complexity, since this
+behavior was unclear before.
+
+======
+
+CommitID: 8be5cc3b1359d88b4b30a39067466c0ae0bfbc4d
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: unfortunatly -> Unfortunately
+--- full commit message ---
+CI: Removes CMakeCache.txt between builds.
+
+If the cache file is not removed, CMake will not reset configurations
+back to their default values. In order to make the tests independent, it
+is simplest to purge the cache. Unfortunatly, this will slow down the
+tests a little and repeat some checks.
+
+======
+
+CommitID: 6b05f827f50e686537e9a23c49c5aa4c0aa6b23d
+commitDate: Wed, 22 Nov 2023 12:39:41 +0000 (20:39 +0800)
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: choise -> choice
+--- full commit message ---
+tuklib_integer: Fix typo discovered by codespell.
+
+Based on internet dictionary searches, 'choise' is an outdated spelling
+of 'choice'.
