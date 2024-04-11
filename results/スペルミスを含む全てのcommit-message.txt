@@ -9,6 +9,7 @@
 - resonable  ->  spelled as reasonable
 - unecessary  ->  unnecessary
 - when it will is  ->  "when it is"
+- there is a typo. The correct spelling  ->  depend not "depened"
 - unfortunatly -> Unfortunately
 - choise -> choice
 
@@ -213,7 +214,32 @@ GCC and Clang can \"pretend\" to be MSVC on Windows, so extra checks are
 needed in tuklib_integer.h to only include <intrin.h> when it will is
 actually needed.
 
-=== (7) ===
+=== (7) === 
+CommitID: 988e09f27b9b04a43d45d10f92782e0092ee27a9
+commitDate: Fri, 20 Oct 2023 16:01:29 +0000 (00:01 +0800)
+committer: Jia Tan <jiat0218@gmail.com>
+mis-spell: depened -> depend
+
+--- full commit message ---
+liblzma: Move is_clmul_supported() back to crc_common.h.
+
+This partially reverts creating crc_clmul.c
+(8c0f9376f58c0696d5d6719705164d35542dd891) where is_clmul_supported()
+was moved, extern'ed, and renamed to lzma_is_clmul_supported(). This
+caused a problem when the function call to lzma_is_clmul_supported()
+results in a call through the PLT. ifunc resolvers run very early in
+the dynamic loading sequence, so the PLT may not be setup properly at
+this point. Whether the PLT is used or not for
+lzma_is_clmul_supported() depened upon the compiler-toolchain used and
+flags.
+
+In liblzma compiled with GCC, for instance, GCC will go through the PLT
+for function calls internal to liblzma if the version scripts and
+symbol visibility hiding are not used. If lazy-binding is disabled,
+then it would have made any program linked with liblzma fail during
+dynamic loading in the ifunc resolver.
+
+=== (8) ===
 
 CommitID: 8be5cc3b1359d88b4b30a39067466c0ae0bfbc4d
 committer: Jia Tan <jiat0218@gmail.com>
@@ -226,7 +252,7 @@ back to their default values. In order to make the tests independent, it
 is simplest to purge the cache. Unfortunatly, this will slow down the
 tests a little and repeat some checks.
 
-=== (8) ===
+=== (9) ===
 
 CommitID: 6b05f827f50e686537e9a23c49c5aa4c0aa6b23d
 commitDate: Wed, 22 Nov 2023 12:39:41 +0000 (20:39 +0800)
