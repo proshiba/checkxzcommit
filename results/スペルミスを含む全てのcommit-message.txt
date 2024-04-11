@@ -9,7 +9,6 @@
 - resonable  ->  spelled as reasonable
 - unecessary  ->  unnecessary
 - when it will is  ->  "when it is"
-- there is a typo. The correct spelling  ->  depend not "depened"
 - unfortunatly -> Unfortunately
 - choise -> choice
 
@@ -214,98 +213,7 @@ GCC and Clang can \"pretend\" to be MSVC on Windows, so extra checks are
 needed in tuklib_integer.h to only include <intrin.h> when it will is
 actually needed.
 
-======
-このスペルミスは9回繰り返しているため、まとめています。
-commitDate: Fri, 30 Dec 2022 15:34:31 +0000 (23:34 +0800)
-committer: Jia Tan <jiat0218@gmail.com>
-mis-spell: depend -> depened
-以下はcommit datetime とID
-Sat, 7 Jan 2023 13:15:16 +0000 (21:15 +0800)
-Thu, 19 Jan 2023 12:35:09 +0000 (20:35 +0800)
-Wed, 1 Mar 2023 13:42:31 +0000 (21:42 +0800)
-Thu, 16 Mar 2023 17:42:28 +0000 (01:42 +0800)
-Wed, 29 Mar 2023 15:46:43 +0000 (23:46 +0800)
-Tue, 6 Jun 2023 16:23:02 +0000 (00:23 +0800)
-Fri, 28 Jul 2023 13:56:48 +0000 (21:56 +0800)
-Mon, 25 Sep 2023 16:47:26 +0000 (00:47 +0800)
-CommitID: 2fcba17fc4d7eda8fc60567169cf2a0e6fcfb2f8
-CommitID: 4f50763b981f9056c5f1763dfb26cfa4a26a181d
-CommitID: 7190f4cc7c9ade5b9b3675d0cbfa3b6d6ec9cb4f
-CommitID: 747c7f2b34bd498f6702c6875500a26b06201772
-CommitID: 8be5cc3b1359d88b4b30a39067466c0ae0bfbc4d
-CommitID: b43ff180fb2e372adce876bfa155fc9bcf0c3db4
-CommitID: bbb42412da6a02705ba3e668e90840c2683e4e67
-CommitID: dbb3a536ed9873ffa0870321f6873e564c6a9da8
-CommitID: f1ab1f6b339d16a53ac53efeb97779ecd2bae70f
-
---- full commit message ---
-xz: Includes <time.h> and <sys/time.h> conditionally in mytime.c.
-
-Previously, mytime.c depended on mythread.h for <time.h> to be included.
-
-
-CI: Add doxygen as a dependency.
-
-Autogen now requires --no-doxygen or having doxygen installed to run
-without errors.
-
-
-CI: Fix windows-ci dependency installation.
-
-All of the MSYS2 environments need make, and it does not come with the
-toolchain package. The toolchain package will install the needed
-compiler toolchains since without this package CMake cannot properly
-generate the Makefiles.
-
-
-CI/CD: Reduce job runners to 4 instead of using matrix strategy.
-
-The old version used too many runners that resulted in unnecessary
-dependency downloads. Now, the runners are reused for the different
-configurations for each OS and build system.
-
-
-CI: Removes CMakeCache.txt between builds.
-
-If the cache file is not removed, CMake will not reset configurations
-back to their default values. In order to make the tests independent, it
-is simplest to purge the cache. Unfortunatly, this will slow down the
-tests a little and repeat some checks.
-
-
-tuklib_physmem: Silence warning from -Wcast-function-type on MinGW-w64.
-
-tuklib_physmem depends on GetProcAddress() for both MSVC and MinGW-w64
-to retrieve a function address. The proper way to do this is to cast the
-return value to the type of function pointer retrieved. Unfortunately,
-this causes a cast-function-type warning, so the best solution is to
-simply ignore the warning.
-
-
-Build: Remove Gnulib dependency from tests.
-
-The tests do not use any Gnulib replacements so they do not need to link
-libgnu.a or have /lib in the include path.
-
-
-CI: Add apt update command before installing dependencies.
-
-Without the extra command, all of the CI tests were automatically
-failing because the Ubuntu servers could not be reached properly.
-
-
-liblzma: Clarify lzma_lzma_preset() documentation in lzma12.h.
-
-lzma_lzma_preset() does not guarentee that the lzma_options_lzma are
-usable in an encoder even if it returns false (success). If liblzma
-is built with default configurations, then the options will always be
-usable. However if the match finders hc3, hc4, or bt4 are disabled, then
-the options may not be usable depending on the preset level requested.
-
-The documentation was updated to reflect this complexity, since this
-behavior was unclear before.
-
-======
+=== (7) ===
 
 CommitID: 8be5cc3b1359d88b4b30a39067466c0ae0bfbc4d
 committer: Jia Tan <jiat0218@gmail.com>
@@ -318,7 +226,7 @@ back to their default values. In order to make the tests independent, it
 is simplest to purge the cache. Unfortunatly, this will slow down the
 tests a little and repeat some checks.
 
-======
+=== (8) ===
 
 CommitID: 6b05f827f50e686537e9a23c49c5aa4c0aa6b23d
 commitDate: Wed, 22 Nov 2023 12:39:41 +0000 (20:39 +0800)
